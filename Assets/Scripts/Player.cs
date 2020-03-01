@@ -1,27 +1,35 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
     //Movement
-    private Rigidbody2D rigidBody;
+    public Rigidbody2D rigidBody;
     public float speed;
     public float jumpSpeed;
     private float movement;
-    public float groundCheckRadius;
-    public Transform groundCheckPoint;
-    private bool isTouchingGround;
-    public LayerMask groundLayer;
-    public bool isFacingRight = false;
-    public int health = 3;
+    private Vector2 velocity;
 
+    // Jump
+    public Transform groundCheckPoint;
+    public LayerMask groundLayer;
+    public float groundCheckRadius;
+    private bool isTouchingGround;
+
+    public bool isFacingRight = false;
+
+    public int health = 3;
     const float blinkingDelay = 0.1f;
+
+    public bool hasBlueFire;
+
+    static public int score;
 
     //Animation
     private Animator playerAnimation;
     private Weapon weaponScript;
+    public AudioSource audioData;
 
     // Start is called before the first frame update
     void Start() {
@@ -31,6 +39,9 @@ public class Player : MonoBehaviour {
 
         // Hide mouse cursor
         Cursor.visible = false;
+
+        audioData = GetComponent<AudioSource>();
+        audioData.Play(0);
     }
 
     // Update is called once per frame
@@ -41,7 +52,6 @@ public class Player : MonoBehaviour {
             jumpSpeed = 0;
 
             StartCoroutine("DelayFade");
-
         }
 
         else
@@ -54,6 +64,8 @@ public class Player : MonoBehaviour {
 
         else
             rigidBody.velocity = new Vector2(movement * speed, rigidBody.velocity.y);
+
+        velocity = rigidBody.velocity;
 
         if (movement > 0f && !isFacingRight) {
             isFacingRight = true;
@@ -75,16 +87,6 @@ public class Player : MonoBehaviour {
         playerAnimation.SetFloat("Health", health);
     }
 
-    // Player is damaged
-    public void takeDamage() {
-        health--;
-
-        SpriteBlinkingEffect();
-
-        GameObject Heart = GameObject.Find("Heart" + health.ToString());
-        Destroy(Heart);
-    }
-
     private void SpriteBlinkingEffect() {
         GetComponent<SpriteRenderer>().color = Color.red;
 
@@ -104,6 +106,31 @@ public class Player : MonoBehaviour {
 
         yield return new WaitForSeconds(1.0f);
 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(5);
+    }
+
+    public Vector2 GetVelocity() {
+        return velocity;
+    }
+
+    // Player is damaged
+    public void takeDamage() {
+        health--;
+
+        SpriteBlinkingEffect();
+
+        GameObject Heart = GameObject.Find("Heart" + health.ToString());
+        Heart.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
+    public void HealthUp() {
+        health++;
+
+        GameObject Heart = GameObject.Find("Heart" + (health - 1).ToString());
+        Heart.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    public bool GetDirection() {
+        return isFacingRight; 
     }
 }

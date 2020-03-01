@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Barrier
+  - Boss
   layers:
   - Default
   - TransparentFX
@@ -48,9 +50,15 @@ TagManager:
   - name: Midground
     uniqueID: 1354265413
     locked: 0
+  - name: Powerups
+    uniqueID: 1950269195
+    locked: 0
   - name: Foreground
     uniqueID: 1423687529
     locked: 0
   - name: UI
     uniqueID: 1762412247
+    locked: 0
+  - name: New Layer
+    uniqueID: 4006618411
     locked: 0
